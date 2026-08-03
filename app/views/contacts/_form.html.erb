@@ -1,0 +1,27 @@
+<%= render "shared/errors", record: contact %>
+<%= render "shared/duplicates", candidates: local_assigns[:duplicate_candidates] %>
+
+<%= form_with model: contact, class: "fieldset" do |form| %>
+  <%= form.label :company_id, "会社" %>
+  <%= form.collection_select :company_id, @company_options, :id, :name, include_blank: "未設定" %>
+
+  <%= form.label :name, "名前" %>
+  <%= form.text_field :name, required: true %>
+
+  <%= form.label :email, "メールアドレス" %>
+  <%= form.email_field :email %>
+
+  <%= form.label :phone, "電話番号" %>
+  <%= form.text_field :phone %>
+
+  <%= form.label :position, "役職" %>
+  <%= form.text_field :position %>
+
+  <%= form.label :memo, "補足" %>
+  <%= form.text_area :memo %>
+
+  <div class="actions">
+    <%= form.submit %>
+    <%= link_to "戻る", contacts_path %>
+  </div>
+<% end %>

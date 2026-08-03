@@ -1,0 +1,79 @@
+<h1><%= @contact.name %></h1>
+<%= render "shared/duplicates", candidates: @duplicate_candidates %>
+
+<div class="actions">
+  <%= link_to "編集", edit_contact_path(@contact), class: "button secondary" if @contact.editable_by?(current_user) %>
+  <% if @contact.archived? %>
+    <%= button_to "表示に戻す", restore_contact_path(@contact), method: :patch if @contact.restorable_by?(current_user) %>
+  <% elsif @contact.editable_by?(current_user) %>
+    <%= button_to "非表示にする", archive_contact_path(@contact), method: :patch, class: "danger" %>
+  <% end %>
+</div>
+
+<div class="panel">
+  <p><strong>Organization:</strong> <%= @contact.organization.name %></p>
+  <p><strong>会社:</strong> <%= link_to @contact.company.name, @contact.company if @contact.company %></p>
+  <p><strong>役職:</strong> <%= @contact.position %></p>
+  <p><strong>メール:</strong> <%= mail_to @contact.email if @contact.email.present? %></p>
+  <p><strong>電話:</strong> <%= @contact.phone %></p>
+  <p><strong>補足:</strong><br><%= simple_format(@contact.memo) %></p>
+</div>
+
+<div class="grid">
+  <section>
+    <h2>名刺画像</h2>
+    <%= form_with model: [ @contact, @business_card ], class: "fieldset" do |form| %>
+      <%= form.label :label, "ラベル" %>
+      <%= form.text_field :label, placeholder: "例: 2026展示会" %>
+      <%= form.label :image, "画像" %>
+      <%= form.file_field :image, accept: "image/*", required: true %>
+      <div class="actions"><%= form.submit "アップロード" %></div>
+    <% end %>
+
+    <% @business_cards.each do |card| %>
+      <div class="panel">
+        <p><strong><%= card.label.presence || "名刺" %></strong> <span class="muted"><%= "非表示" if card.archived? %></span></p>
+        <% if card.image.attached? %>
+          <%= image_tag card.image, class: "card-image" %>
+        <% end %>
+        <div class="actions">
+          <% if card.archived? %>
+            <%= button_to "表示に戻す", restore_contact_business_card_path(@contact, card), method: :patch if card.restorable_by?(current_user) %>
+          <% elsif card.editable_by?(current_user) %>
+            <%= button_to "非表示にする", contact_business_card_path(@contact, card), method: :delete, class: "danger" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+  <section>
+    <h2>メモ</h2>
+    <%= form_with model: [ @contact, @contact_note ], class: "fieldset" do |form| %>
+      <%= form.label :visibility, "種別" %>
+      <%= form.select :visibility, [["共有メモ", "shared"], ["個人メモ", "personal"]] %>
+      <%= form.label :body, "本文" %>
+      <%= form.text_area :body, required: true %>
+      <div class="actions"><%= form.submit "追加" %></div>
+    <% end %>
+
+    <% @contact_notes.each do |note| %>
+      <div class="panel">
+        <p><strong><%= note.visibility == "shared" ? "共有" : "個人" %></strong> <span class="muted"><%= note.user.name %> / <%= l note.created_at, format: :short %></span></p>
+        <%= simple_format(note.body) %>
+        <%= button_to "非表示にする", contact_contact_note_path(@contact, note), method: :delete, class: "danger" if note.editable_by?(current_user) %>
+      </div>
+    <% end %>
+
+    <% if @archived_notes.present? %>
+      <h3>非表示のメモ</h3>
+      <% @archived_notes.each do |note| %>
+        <div class="panel">
+          <p class="muted"><%= note.visibility == "shared" ? "共有" : "個人" %> / <%= note.user.name %></p>
+          <%= simple_format(note.body) %>
+          <%= button_to "表示に戻す", restore_contact_contact_note_path(@contact, note), method: :patch if note.restorable_by?(current_user) %>
+        </div>
+      <% end %>
+    <% end %>
+  </section>
+</div>

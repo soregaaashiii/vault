@@ -1,0 +1,11 @@
+<%= render "shared/errors", record: organization %>
+
+<%= form_with model: organization, class: "fieldset" do |form| %>
+  <%= form.label :name, "Organization名" %>
+  <%= form.text_field :name, required: true %>
+
+  <div class="actions">
+    <%= form.submit %>
+    <%= link_to "戻る", organizations_path %>
+  </div>
+<% end %>

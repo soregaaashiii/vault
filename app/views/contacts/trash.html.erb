@@ -1,0 +1,15 @@
+<h1>非表示の担当者</h1>
+
+<table>
+  <thead><tr><th>名前</th><th>会社</th><th>アーカイブ日時</th><th></th></tr></thead>
+  <tbody>
+    <% @contacts.each do |contact| %>
+      <tr>
+        <td><%= link_to contact.name, contact %></td>
+        <td><%= contact.company&.name %></td>
+        <td><%= l contact.archived_at, format: :short %></td>
+        <td><%= button_to "復元", restore_contact_path(contact), method: :patch %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

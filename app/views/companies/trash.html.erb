@@ -1,0 +1,14 @@
+<h1>非表示の会社</h1>
+
+<table>
+  <thead><tr><th>会社名</th><th>アーカイブ日時</th><th></th></tr></thead>
+  <tbody>
+    <% @companies.each do |company| %>
+      <tr>
+        <td><%= link_to company.name, company %></td>
+        <td><%= l company.archived_at, format: :short %></td>
+        <td><%= button_to "復元", restore_company_path(company), method: :patch %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

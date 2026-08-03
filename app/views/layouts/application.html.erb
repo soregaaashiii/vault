@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Vault" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Vault">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <header class="topbar">
+      <div>
+        <strong>VAULT</strong>
+        <% if current_user %>
+          <span class="muted"><%= current_user.name %> / <%= current_user.role %><%= " / #{current_organization.name}" if current_organization %></span>
+        <% end %>
+      </div>
+      <% if current_user %>
+        <nav>
+          <%= link_to "検索", root_path %>
+          <%= link_to "登録", scan_contacts_path %>
+          <% if org_admin? || service_admin? %>
+            <%= link_to "非表示一覧", trash_path %>
+          <% end %>
+          <% if org_admin? || service_admin? %>
+            <%= link_to "ユーザー管理", users_path %>
+          <% end %>
+          <% if service_admin? %>
+            <%= link_to "Organization管理", organizations_path %>
+            <%= link_to "設定", system_settings_path %>
+          <% end %>
+          <%= button_to "ログアウト", session_path, method: :delete, class: "link-button" %>
+        </nav>
+      <% end %>
+    </header>
+
+    <main class="container">
+      <% if notice.present? %><p class="flash notice"><%= notice %></p><% end %>
+      <% if alert.present? %><p class="flash alert"><%= alert %></p><% end %>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>

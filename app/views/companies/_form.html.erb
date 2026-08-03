@@ -1,0 +1,24 @@
+<%= render "shared/errors", record: company %>
+<%= render "shared/duplicates", candidates: local_assigns[:duplicate_candidates] %>
+
+<%= form_with model: company, class: "fieldset" do |form| %>
+  <%= form.label :name, "会社名" %>
+  <%= form.text_field :name, required: true %>
+
+  <%= form.label :website, "Webサイト" %>
+  <%= form.url_field :website %>
+
+  <%= form.label :phone, "電話番号" %>
+  <%= form.text_field :phone %>
+
+  <%= form.label :address, "住所" %>
+  <%= form.text_area :address %>
+
+  <%= form.label :description, "説明" %>
+  <%= form.text_area :description %>
+
+  <div class="actions">
+    <%= form.submit %>
+    <%= link_to "戻る", companies_path %>
+  </div>
+<% end %>

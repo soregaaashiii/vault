@@ -1,0 +1,62 @@
+<h1>非表示一覧</h1>
+<p class="muted">非表示にしたデータは削除されません。後からいつでも表示に戻せます。</p>
+
+<div class="card-list">
+  <% @contacts.each do |contact| %>
+    <% hidden_cards = @hidden_cards_by_contact_id[contact.id] || [] %>
+    <% hidden_notes = @hidden_notes_by_contact_id[contact.id] || [] %>
+    <article class="business-card-row">
+      <div class="business-card-thumb">
+        <% card = hidden_cards.first || contact.business_cards.active.first %>
+        <% if card&.image&.attached? %>
+          <%= image_tag card.image %>
+        <% else %>
+          <span class="muted">画像なし</span>
+        <% end %>
+      </div>
+
+      <div>
+        <h2><%= link_to contact.name, contact %></h2>
+        <p><strong>会社:</strong> <%= link_to contact.company.name, contact.company if contact.company %></p>
+        <p><strong>役職:</strong> <%= contact.position.presence || "-" %></p>
+        <p><strong>メール:</strong> <%= mail_to contact.email if contact.email.present? %></p>
+        <p><strong>電話:</strong> <%= contact.phone.presence || "-" %></p>
+
+        <div class="actions">
+          <% if contact.archived? %>
+            <%= button_to "表示に戻す", restore_contact_path(contact), method: :patch %>
+          <% end %>
+          <% if contact.company&.archived? %>
+            <%= button_to "会社を表示に戻す", restore_company_path(contact.company), method: :patch %>
+          <% end %>
+        </div>
+
+        <% if hidden_cards.any? %>
+          <h3>非表示の名刺</h3>
+          <% hidden_cards.each do |card| %>
+            <div class="inline-item">
+              <span><%= card.label.presence || "名刺" %> / <%= l card.archived_at, format: :short %></span>
+              <%= button_to "表示に戻す", restore_contact_business_card_path(contact, card), method: :patch %>
+            </div>
+          <% end %>
+        <% end %>
+
+        <% if hidden_notes.any? %>
+          <h3>非表示のメモ</h3>
+          <% hidden_notes.each do |note| %>
+            <div class="inline-item">
+              <span><%= note.visibility == "shared" ? "共有" : "個人" %> / <%= note.user.name %> / <%= l note.archived_at, format: :short %></span>
+              <%= button_to "表示に戻す", restore_contact_contact_note_path(contact, note), method: :patch %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </article>
+  <% end %>
+</div>
+
+<% if @contacts.blank? %>
+  <div class="panel">
+    <p>非表示の人はいません。</p>
+  </div>
+<% end %>

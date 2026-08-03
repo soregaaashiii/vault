@@ -1,0 +1,10 @@
+<% if candidates.present? %>
+  <div class="warning">
+    <strong>重複候補があります</strong>
+    <ul>
+      <% candidates.each do |candidate| %>
+        <li><%= link_to candidate.name, candidate %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

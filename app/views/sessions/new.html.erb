@@ -1,0 +1,13 @@
+<h1>ログイン</h1>
+
+<%= form_with url: session_path, class: "fieldset" do |form| %>
+  <%= form.label :email, "メールアドレス" %>
+  <%= form.email_field :email, required: true, autofocus: true %>
+
+  <%= form.label :password, "パスワード" %>
+  <%= form.password_field :password, required: true %>
+
+  <div class="actions">
+    <%= form.submit "ログイン" %>
+  </div>
+<% end %>

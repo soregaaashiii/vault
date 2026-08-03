@@ -1,0 +1,31 @@
+<%= render "shared/errors", record: user %>
+
+<%= form_with model: user, class: "fieldset" do |form| %>
+  <%= form.label :name, "名前" %>
+  <%= form.text_field :name, required: true %>
+
+  <%= form.label :email, "メールアドレス" %>
+  <%= form.email_field :email, required: true %>
+
+  <% if service_admin? %>
+    <%= form.label :organization_id, "Organization" %>
+    <%= form.collection_select :organization_id, Organization.active.order(:name), :id, :name, include_blank: user.service_admin? %>
+
+    <%= form.label :role, "権限" %>
+    <%= form.select :role, User::ROLES.map { |role| [role, role] } %>
+  <% else %>
+    <%= form.hidden_field :role, value: "member" %>
+    <p class="muted">org_adminは一般ユーザーのみ作成・編集できます。</p>
+  <% end %>
+
+  <%= form.label :password, "パスワード" %>
+  <%= form.password_field :password, required: user.new_record? %>
+
+  <%= form.label :password_confirmation, "パスワード確認" %>
+  <%= form.password_field :password_confirmation, required: user.new_record? %>
+
+  <div class="actions">
+    <%= form.submit %>
+    <%= link_to "戻る", users_path %>
+  </div>
+<% end %>

@@ -1,0 +1,27 @@
+<h1>担当者一覧</h1>
+
+<div class="actions">
+  <%= link_to "担当者を登録", new_contact_path, class: "button" %>
+  <%= link_to "名刺写真から登録", scan_contacts_path, class: "button secondary" %>
+  <%= form_with url: contacts_path, method: :get do |form| %>
+    <%= form.search_field :q, value: @q, placeholder: "名前・会社・メールで検索" %>
+    <%= form.submit "検索", class: "secondary" %>
+  <% end %>
+</div>
+
+<table>
+  <thead>
+    <tr><th>名前</th><th>会社</th><th>役職</th><th>メール</th><th></th></tr>
+  </thead>
+  <tbody>
+    <% @contacts.each do |contact| %>
+      <tr>
+        <td><%= link_to contact.name, contact %></td>
+        <td><%= link_to contact.company.name, contact.company if contact.company %></td>
+        <td><%= contact.position %></td>
+        <td><%= mail_to contact.email if contact.email.present? %></td>
+        <td><%= link_to "編集", edit_contact_path(contact) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

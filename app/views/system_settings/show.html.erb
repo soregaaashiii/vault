@@ -1,0 +1,21 @@
+<h1>設定</h1>
+<p class="muted">システム設定、OCR設定、課金管理の将来用土台です。service_adminのみ操作できます。</p>
+
+<%= form_with url: system_settings_path, method: :patch, class: "fieldset" do |form| %>
+  <%= form.label :ocr_provider, "OCR provider" %>
+  <%= form.select :ocr_provider, [["Local Vision", "local_vision"], ["Google Cloud Vision", "google_cloud_vision"]], selected: @settings["ocr_provider"] %>
+
+  <%= form.label :google_cloud_vision_api_key, "Google Cloud Vision APIキー" %>
+  <%= form.password_field :google_cloud_vision_api_key, placeholder: @settings["google_cloud_vision_api_key_configured"] ? "設定済み（変更する場合のみ入力）" : "未設定" %>
+  <p class="muted">スマホのデモ機でOCRする場合は、OCR providerをGoogle Cloud VisionにしてAPIキーを設定してください。</p>
+
+  <%= form.label :billing_mode, "課金管理モード（将来用）" %>
+  <%= form.text_field :billing_mode, value: @settings["billing_mode"] %>
+
+  <%= form.label :system_notice, "システム通知" %>
+  <%= form.text_area :system_notice, value: @settings["system_notice"] %>
+
+  <div class="actions">
+    <%= form.submit "更新" %>
+  </div>
+<% end %>

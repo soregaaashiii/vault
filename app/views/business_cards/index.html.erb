@@ -1,0 +1,71 @@
+<div class="page-heading">
+  <div>
+    <h1>検索</h1>
+    <p class="muted">名刺と会社を切り替えて検索できます。</p>
+  </div>
+</div>
+
+<nav class="search-tabs" aria-label="検索種別">
+  <%= link_to "名刺検索", root_path(q: @q), class: @tab == "cards" ? "active" : nil %>
+  <%= link_to "会社検索", root_path(tab: "companies", q: @q), class: @tab == "companies" ? "active" : nil %>
+</nav>
+
+<%= form_with url: root_path, method: :get, class: "search-panel" do |form| %>
+  <%= form.hidden_field :tab, value: @tab if @tab == "companies" %>
+  <%= form.search_field :q, value: @q, placeholder: @tab == "companies" ? "会社名・電話・住所で検索" : "例: 山田、Vault、taro@example.com" %>
+  <%= form.submit "検索", class: "secondary" %>
+<% end %>
+
+<% if @tab == "companies" %>
+  <table>
+    <thead>
+      <tr><th>会社名</th><th>電話</th><th>Web</th><th></th></tr>
+    </thead>
+    <tbody>
+      <% @companies.each do |company| %>
+        <tr>
+          <td><%= link_to company.name, company %></td>
+          <td><%= company.phone %></td>
+          <td><%= link_to company.website, company.website if company.website.present? %></td>
+          <td><%= link_to "編集", edit_company_path(company) if company.editable_by?(current_user) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if @companies.blank? %>
+    <div class="panel">
+      <p>会社が見つかりません。</p>
+    </div>
+  <% end %>
+<% else %>
+  <div class="card-list">
+    <% @contacts.each do |contact| %>
+      <% card = contact.business_cards.active.first %>
+      <article class="business-card-row">
+        <div class="business-card-thumb">
+          <% if card&.image&.attached? %>
+            <%= image_tag card.image %>
+          <% else %>
+            <span class="muted">画像なし</span>
+          <% end %>
+        </div>
+        <div>
+          <h2><%= link_to contact.name, contact %></h2>
+          <p><strong>会社:</strong> <%= link_to contact.company.name, contact.company if contact.company %></p>
+          <p><strong>役職:</strong> <%= contact.position.presence || "-" %></p>
+          <p><strong>メール:</strong> <%= mail_to contact.email if contact.email.present? %></p>
+          <p><strong>電話:</strong> <%= contact.phone.presence || "-" %></p>
+          <p class="muted">名刺 <%= contact.business_cards.active.count %>枚 / メモ <%= contact.contact_notes.active.visible_to(current_user).count %>件</p>
+          <%= link_to "編集", edit_contact_path(contact) if contact.editable_by?(current_user) %>
+        </div>
+      </article>
+    <% end %>
+  </div>
+
+  <% if @contacts.blank? %>
+    <div class="panel">
+      <p>登録された名刺がまだありません。</p>
+    </div>
+  <% end %>
+<% end %>

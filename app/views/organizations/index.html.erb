@@ -1,0 +1,28 @@
+<div class="page-heading">
+  <div>
+    <h1>Organization管理</h1>
+    <p class="muted">停止・削除扱いは非表示化です。物理削除はしません。</p>
+  </div>
+  <%= link_to "Organizationを作成", new_organization_path, class: "button subtle-button" %>
+</div>
+
+<table>
+  <thead><tr><th>名前</th><th>状態</th><th></th></tr></thead>
+  <tbody>
+    <% @organizations.each do |organization| %>
+      <tr>
+        <td><%= organization.name %></td>
+        <td><%= organization.archived? ? "停止中" : "有効" %></td>
+        <td class="actions">
+          <%= link_to "編集", edit_organization_path(organization) %>
+          <% if organization.archived? %>
+            <%= button_to "復元", restore_organization_path(organization), method: :patch %>
+          <% else %>
+            <%= button_to "停止", archive_organization_path(organization), method: :patch, class: "danger" %>
+            <%= button_to "削除扱い", destroy_as_archive_organization_path(organization), method: :patch, class: "danger" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,17 @@
+/.bundle/
+.DS_Store
+**/.DS_Store
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/.keep
+/public/assets
+/public/packs
+/node_modules
+/config/master.key
+/config/credentials/*.key
+/coverage/

@@ -1,0 +1,19 @@
+<h1>登録</h1>
+
+<div class="panel">
+  <p>登録する単位は「人」です。名刺画像をアップロードすると、会社・名刺・メモをその人の情報としてまとめて登録します。</p>
+  <p class="muted">OCRが使えない環境では、スマホやプレビュー等で読み取ったテキストを下の欄に貼ると、同じ解析で登録できます。Google Cloud Vision APIにも切り替え可能です。</p>
+</div>
+
+<%= form_with url: create_from_card_contacts_path, scope: :business_card_scan, class: "fieldset", multipart: true do |form| %>
+  <%= form.label :image, "名刺画像" %>
+  <%= form.file_field :image, accept: "image/*", required: true %>
+
+  <%= form.label :text, "読み取りテキスト（任意）" %>
+  <%= form.text_area :text, placeholder: "OCR結果がある場合はここに貼り付け。空なら画像から自動読取します。" %>
+
+  <div class="actions">
+    <%= form.submit "写真から自動登録" %>
+    <%= link_to "検索へ戻る", root_path %>
+  </div>
+<% end %>
